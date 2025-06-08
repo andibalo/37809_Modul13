@@ -82,6 +82,9 @@ private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
  * notification. This dismisses the notification and stops the service.
  */
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+    private val runningQOrLater =
+        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+
     private var foregroundOnlyLocationServiceBound = false
 
     // Provides location updates for while-in-use feature.
@@ -141,6 +144,27 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         }
+    }
+
+    // TODO: Step 3.3, Add check for background permission.Add commentMore actions
+    val backgroundPermissionApproved =
+        // TODO: Step 3.4, Add another entry to permission request array.
+        if (runningQOrLater) {
+            permissionRequests.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        } else {
+            true
+        }
+
+    val permissionRequests = arrayListOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    // TODO: Step 3.4, Add another entry to permission request array.
+    var foregroundAndBackgroundLocationApproved ->
+    startForegroundAndBackgroundLocation()
+
+// TODO: Step 3.5, For Android 10, check if background permissions approved in request code.
+    if(runningQOrLater) {
+        foregroundAndBackgroundLocationApproved =
+            foregroundAndBackgroundLocationApproved &&
+                    (grantResults[1] == PackageManager.PERMISSION_GRANTED)
     }
 
     override fun onStart() {
